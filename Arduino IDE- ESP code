@@ -1,0 +1,64 @@
+#include <ESP8266WiFi.h>
+#include <Wire.h>
+#include <PN532_I2C.h>
+#include <PN532.h>
+#include <NfcAdapter.h>
+#include <ArduinoJson.h>
+
+PN532_I2C pn532_i2c(Wire);
+NfcAdapter nfc = NfcAdapter(pn532_i2c);
+
+const char* ssid = "Jatin Vaity";
+const char* password = "0987654321";
+const char* server = "http://192.168.196.61:5000";
+
+WiFiClient client;
+
+void setup() {
+    Serial.begin(9600);
+    WiFi.begin(ssid, password);
+
+    Serial.print("Connecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("\nConnected to WiFi");
+
+    nfc.begin();
+}
+
+void loop() {
+    Serial.println("Scan your NFC Card...");
+    if (nfc.tagPresent()) {
+        NfcTag tag = nfc.read();
+        String tagId = tag.getUidString();
+        Serial.println("Tag ID: " + tagId);
+
+        checkPatient(tagId);
+    }
+    delay(2000);
+}
+
+void checkPatient(String tagId) {
+    WiFiClient client;
+    if (client.connect(server, 5000)) {
+        String payload = "{\"patientID\":\"" + tagId + "\"}";
+        
+        client.print("POST /api/patient HTTP/1.1\r\n");
+        client.print("Content-Type: application/json\r\n");
+        client.print("Content-Length: " + String(payload.length()) + "\r\n");
+        client.print("\r\n");
+        client.print(payload);
+
+        delay(500);
+
+        while (client.available()) {
+            String response = client.readString();
+            Serial.println("Server Response: " + response);
+        }
+    } else {
+        Serial.println("Connection failed.");
+    }
+    client.stop();
+} 
