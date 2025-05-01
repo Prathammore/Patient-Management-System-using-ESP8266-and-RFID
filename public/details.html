@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Details</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ECF0F1;
+      color: #2C3E50;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header, footer {
+      background-color: #2C3E50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: left;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button, .nav-link {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      background-color: #1ABC9C;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, button:hover {
+      background-color: #16a085;
+    }
+
+    /* Hide buttons on print */
+    @media print {
+      .actions, header, footer {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Patient Information</h1>
+</header>
+
+<main>
+  <div class="card" id="info">
+    <p>Loading patient details...</p>
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Smart Hospital Management
+</footer>
+
+<script>
+  const uid = new URLSearchParams(window.location.search).get("uid");
+
+  fetch(`/details?uid=${uid}`)
+    .then(res => res.json())
+    .then(data => {
+      const infoDiv = document.getElementById("info");
+
+      if (data.error) {
+        infoDiv.innerHTML = `<p>${data.error}</p>`;
+      } else {
+        infoDiv.innerHTML = `
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Age:</strong> ${data.age}</p>
+          <p><strong>Gender:</strong> ${data.gender}</p>
+          <p><strong>Disease:</strong> ${data.disease}</p>
+          <p><strong>Entry At:</strong> ${new Date(data.entryAt).toLocaleString()}</p>
+          
+          <div class="actions">
+            <a class="nav-link" href="/home.html"> Back to Scan</a>
+            <button onclick="window.print()"> Print Details</button>
+            <a class="nav-link" href="/register.html?uid=${data.uid}&name=${encodeURIComponent(data.name)}&age=${data.age}&gender=${data.gender}&disease=${encodeURIComponent(data.disease)}"> Update Details</a>
+          </div>
+        `;
+      }
+    })
+    .catch(err => {
+      document.getElementById("info").innerHTML = `<p>Error fetching details</p>`;
+      console.error(err);
+    });
+</script>
+
+</body>
+</html>

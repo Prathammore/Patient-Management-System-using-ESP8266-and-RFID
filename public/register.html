@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register Patient</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ECF0F1;
+      color: #2C3E50;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header, footer {
+      background-color: #2C3E50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      background-color: #1ABC9C;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #16a085;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Register New Patient</h1>
+</header>
+
+<main>
+  <div class="card">
+    <form action="/register" method="POST">
+      <input type="hidden" name="uid" id="uid">
+      <input type="text" name="name" placeholder="Enter Name" required>
+      <input type="number" name="age" placeholder="Enter Age" required>
+      <input type="text" name="gender" placeholder="Enter Gender" required>
+      <input type="text" name="disease" placeholder="Enter Disease" required>
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Smart Hospital Management
+</footer>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const uid = params.get("uid");
+  const name = params.get("name");
+  const age = params.get("age");
+  const gender = params.get("gender");
+  const disease = params.get("disease");
+
+  // Pre-fill the form if updating
+  if (uid) {
+    document.getElementById("uid").value = uid;
+    document.querySelector("input[name='name']").value = name;
+    document.querySelector("input[name='age']").value = age;
+    document.querySelector("input[name='gender']").value = gender;
+    document.querySelector("input[name='disease']").value = disease;
+  }
+</script>
+
+
+</body>
+</html>

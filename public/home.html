@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scan RFID - Hospital System</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ECF0F1;
+      color: #2C3E50;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #1ABC9C;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    header, footer {
+      background-color: #2C3E50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .status {
+      margin-top: 15px;
+      font-size: 1.2em;
+      color: #1ABC9C;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Patient Management System</h1>
+
+  <a href="search.html">
+    <button> Search Patient</button>
+  </a>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Please Scan Your Card</h2>
+    <p class="status" id="status">Waiting for scan...</p>
+  </div>
+</main>
+
+<footer>
+  &copy; 2025 Patient Management System
+</footer>
+
+<script>
+  setInterval(() => {
+    fetch("/get-uid")
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "new") {
+          window.location.href = `/register.html?uid=${data.uid}`;
+        } else if (data.status === "existing") {
+          window.location.href = `/details.html?uid=${data.uid}`;
+        }
+      });
+  }, 2000);
+</script>
+
+</body>
+</html>
